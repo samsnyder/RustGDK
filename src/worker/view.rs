@@ -9,7 +9,9 @@ pub struct View {
 	connection: Connection,
 	dispatcher: Box<Dispatcher<View>>,
 
-	entities: HashMap<EntityId, Entity>
+	entities: HashMap<EntityId, Entity>,
+	added_this_cs: Vec<EntityId>,
+	add_entity_cbs: Vec<Box<Fn(&Entity)>>,
 }
 
 impl View {
@@ -17,7 +19,9 @@ impl View {
 		let mut view = Box::new(View {
 			connection,
 			dispatcher: Dispatcher::create(),
-			entities: HashMap::new()
+			entities: HashMap::new(),
+			added_this_cs: Vec::new(),
+			add_entity_cbs: Vec::new(),
 		});
 		
 
@@ -34,13 +38,31 @@ impl View {
     	self.dispatcher.process(op_list);
 	}
 
+	pub fn register_add_entity_callback(&mut self, cb: Box<Fn(&Entity)>) {
+		self.add_entity_cbs.push(cb);
+	}
+
+	fn on_entity_added(&self, entity_id: EntityId) {
+		let entity = self.entities.get(&entity_id).unwrap();
+		for cb in self.add_entity_cbs.iter() {
+			(*cb)(entity);
+		}
+	}
+
 	fn register_dispatcher_ops(&mut self) {
+		self.dispatcher.register_critical_section_callback(Box::new(|view, in_critical_section| {
+			if !in_critical_section {
+				for &entity_id in view.added_this_cs.iter() {
+					view.on_entity_added(entity_id);
+				}
+				view.added_this_cs.clear();
+			}
+		}));
+
 		self.dispatcher.register_add_entity_callback(Box::new(|view, entity_id| {
 			let entity = Entity::new(entity_id);
-			println!("New entity {}", entity_id);
 			view.entities.insert(entity_id, entity);
-
-			println!("New entityaaa {}", view.entities.len());
+			view.added_this_cs.push(entity_id);
 		}));
 	}
 }

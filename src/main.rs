@@ -11,7 +11,11 @@ fn main() {
 
 	let conn = worker::Connection::connect_with_receptionist("UnityWorker", "127.0.0.1", 7777, worker_id.as_str());
 
-	let view = worker::View::new(conn);
+	let mut view = worker::View::new(conn);
+
+	view.register_add_entity_callback(Box::new(|entity| {
+		println!("Entity ID {}", entity.entity_id);
+	}));
 
 	loop {
 		view.process();

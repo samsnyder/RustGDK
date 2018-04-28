@@ -1,7 +1,7 @@
 use worker::EntityId;
 
 pub struct Entity {
-	entity_id: EntityId
+	pub entity_id: EntityId
 }
 
 impl Entity {
