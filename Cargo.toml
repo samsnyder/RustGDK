@@ -1,0 +1,11 @@
+[package]
+name = "worker_sdk"
+version = "0.1.0"
+authors = ["sam <samsnyder96@gmail.com>"]
+
+build = "src/build.rs"
+
+[dependencies]
+
+libc = "0.2.0"
+rand = "0.4.2"
