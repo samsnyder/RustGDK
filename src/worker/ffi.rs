@@ -1,5 +1,5 @@
 use libc::{c_char, c_void};
-use worker::{EntityId, Dispatcher, ComponentId};
+use worker::{EntityId, ComponentId};
 
 #[repr(C)] pub struct Worker_ConnectionFuture { private: [u8; 0] }
 #[repr(C)] pub struct Worker_ComponentVtable { pub private: [u8; 1000] }
@@ -87,10 +87,10 @@ extern {
     pub fn Worker_Dispatcher_Process(disp: *const Worker_Dispatcher, op_list: *const Worker_OpList);
 
     pub fn Worker_Dispatcher_SetCriticalSectionCallback(disp: *const Worker_Dispatcher,
-    	data: *mut Dispatcher, callback: extern fn(*mut Dispatcher, *const Worker_CriticalSectionOp));
+    	data: *mut c_void, callback: extern fn(*mut c_void, *const Worker_CriticalSectionOp));
     pub fn Worker_Dispatcher_SetAddEntityCallback(disp: *const Worker_Dispatcher,
-    	data: *mut Dispatcher, callback: extern fn(*mut Dispatcher, *const Worker_AddEntityOp));
+    	data: *mut c_void, callback: extern fn(*mut c_void, *const Worker_AddEntityOp));
     pub fn Worker_Dispatcher_SetAddComponentCallback(disp: *const Worker_Dispatcher,
-    	data: *mut Dispatcher, callback: extern fn(*mut Dispatcher, *const Worker_AddComponentOp));
+    	data: *mut c_void, callback: extern fn(*mut c_void, *const Worker_AddComponentOp));
    
 }

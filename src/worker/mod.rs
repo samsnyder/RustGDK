@@ -1,9 +1,12 @@
 mod ffi;
-pub mod dispatcher;
-pub mod connection;
+mod dispatcher;
+mod connection;
+mod view;
+mod entity;
 
 pub use self::connection::Connection;
 pub use self::dispatcher::Dispatcher;
+pub use self::view::View;
 
 type EntityId = i64;
 type ComponentId = u32;

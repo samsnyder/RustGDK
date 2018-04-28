@@ -1,15 +1,16 @@
 use libc::c_void;
 use worker::{ffi, OpList, EntityId, ComponentId};
 
-pub struct Dispatcher {
+pub struct Dispatcher<T> {
 	pointer: *const ffi::Worker_Dispatcher,
+	data: Option<*mut c_void>,
 	
-	critical_section_cbs: Vec<Box<FnMut(bool)>>,
-	add_entity_cbs: Vec<Box<FnMut(EntityId)>>,
-	add_component_cbs: Vec<Box<FnMut(EntityId, ComponentId, *const c_void)>>
+	critical_section_cbs: Vec<Box<FnMut(&mut T, bool)>>,
+	add_entity_cbs: Vec<Box<FnMut(&mut T, EntityId)>>,
+	add_component_cbs: Vec<Box<FnMut(&mut T, EntityId, ComponentId, *const c_void)>>
 }
 
-impl Drop for Dispatcher {
+impl<T> Drop for Dispatcher<T> {
 	fn drop(&mut self) {
 		unsafe {
 			ffi::Worker_Dispatcher_Destroy(self.pointer);
@@ -17,29 +18,36 @@ impl Drop for Dispatcher {
 	}
 }
 
-impl Dispatcher {
-	pub fn create() -> Box<Dispatcher> {
+impl<T> Dispatcher<T> {
+	pub fn create() -> Box<Dispatcher<T>> {
 		unsafe {
 			let mut dispatcher = Box::new(Dispatcher {
 				pointer: ffi::Worker_Dispatcher_Create(),
+				data: None,
 				
 				critical_section_cbs: Vec::new(),
 				add_entity_cbs: Vec::new(),
 				add_component_cbs: Vec::new()
 			});
 
+
+			let dispatcher_ptr: *mut c_void = &mut (*dispatcher) as *mut _ as *mut c_void;
 			ffi::Worker_Dispatcher_SetCriticalSectionCallback(dispatcher.pointer, 
-				&mut (*dispatcher),
-				on_critical_section);
+				dispatcher_ptr,
+				on_critical_section::<T>);
 			ffi::Worker_Dispatcher_SetAddEntityCallback(dispatcher.pointer, 
-				&mut (*dispatcher),
-				on_add_entity);
+				dispatcher_ptr,
+				on_add_entity::<T>);
 			ffi::Worker_Dispatcher_SetAddComponentCallback(dispatcher.pointer, 
-				&mut (*dispatcher),
-				on_add_component);
+				dispatcher_ptr,
+				on_add_component::<T>);
 
 			dispatcher
 		}
+	}
+
+	pub fn set_data(&mut self, data: *mut c_void) {
+		self.data = Some(data);
 	}
 
 	pub fn process(&self, op_list: OpList) {
@@ -48,23 +56,24 @@ impl Dispatcher {
 		}
 	}
 
-	pub fn register_critical_section_callback(&mut self, cb: Box<FnMut(bool)>) {
+	pub fn register_critical_section_callback(&mut self, cb: Box<FnMut(&mut T, bool)>) {
 		self.critical_section_cbs.push(cb);
 	}
 
-	pub fn register_add_entity_callback(&mut self, cb: Box<FnMut(EntityId)>) {
+	pub fn register_add_entity_callback(&mut self, cb: Box<FnMut(&mut T, EntityId)>) {
 		self.add_entity_cbs.push(cb);
 	}
 
-	pub fn register_add_component_callback(&mut self, cb: Box<FnMut(EntityId, ComponentId, *const c_void)>) {
+	pub fn register_add_component_callback(&mut self, cb: Box<FnMut(&mut T, EntityId, ComponentId, *const c_void)>) {
 		self.add_component_cbs.push(cb);
 	}
 
 	fn on_critical_section(&mut self, op: *const ffi::Worker_CriticalSectionOp) {
 		unsafe {
 			let in_critical_section = (*op).in_critical_section == 1;
+			let dispatcher_data: &mut T = &mut *(self.data.unwrap() as *mut T);
 			for cb in self.critical_section_cbs.iter_mut() {
-				(*cb)(in_critical_section);
+				(*cb)(dispatcher_data, in_critical_section);
 			}
 		}
 	}
@@ -72,8 +81,9 @@ impl Dispatcher {
 	fn on_add_entity(&mut self, op: *const ffi::Worker_AddEntityOp) {
 		unsafe {
 			let entity_id = (*op).entity_id;
+			let dispatcher_data: &mut T = &mut *(self.data.unwrap() as *mut T);
 			for cb in self.add_entity_cbs.iter_mut() {
-				(*cb)(entity_id);
+				(*cb)(dispatcher_data, entity_id);
 			}
 		}
 	}
@@ -83,27 +93,28 @@ impl Dispatcher {
 			let entity_id = (*op).entity_id;
 			let component_id = (*op).data.component_id;
 			let data = (*op).data.schema_type;
+			let dispatcher_data: &mut T = &mut *(self.data.unwrap() as *mut T);
 			for cb in self.add_component_cbs.iter_mut() {
-				(*cb)(entity_id, component_id, data);
+				(*cb)(dispatcher_data, entity_id, component_id, data);
 			}
 		}
 	}
 }
 
-extern fn on_critical_section(dispatcher: *mut Dispatcher, op: *const ffi::Worker_CriticalSectionOp) {
+extern fn on_critical_section<T>(dispatcher: *mut c_void, op: *const ffi::Worker_CriticalSectionOp) {
 	unsafe {
-		(*dispatcher).on_critical_section(op);
+		(*(dispatcher as *mut Dispatcher<T>)).on_critical_section(op);
 	}
 }
 
-extern fn on_add_entity(dispatcher: *mut Dispatcher, op: *const ffi::Worker_AddEntityOp) {
+extern fn on_add_entity<T>(dispatcher: *mut c_void, op: *const ffi::Worker_AddEntityOp) {
 	unsafe {
-		(*dispatcher).on_add_entity(op);
+		(*(dispatcher as *mut Dispatcher<T>)).on_add_entity(op);
 	}
 }
 
-extern fn on_add_component(dispatcher: *mut Dispatcher, op: *const ffi::Worker_AddComponentOp) {
+extern fn on_add_component<T>(dispatcher: *mut c_void, op: *const ffi::Worker_AddComponentOp) {
 	unsafe {
-		(*dispatcher).on_add_component(op);
+		(*(dispatcher as *mut Dispatcher<T>)).on_add_component(op);
 	}
 }
