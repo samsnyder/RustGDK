@@ -1,9 +1,15 @@
 extern crate libc;
 extern crate rand;
+extern crate specs;
 
 mod worker;
+mod ecs;
+mod schema;
 
 use rand::Rng;
+use specs::World;
+use schema::standard_library::Position;
+use ecs::EcsInterface;
 
 fn main() {
 	let mut worker_id = String::from("RustWorker");
@@ -11,14 +17,23 @@ fn main() {
 
 	let conn = worker::Connection::connect_with_receptionist("UnityWorker", "127.0.0.1", 7777, worker_id.as_str());
 
-	let mut view = worker::View::new(conn);
+	// let mut view = worker::View::new(conn);
 
-	view.register_add_entity_callback(Box::new(|entity| {
-		println!("Entity ID {}", entity.entity_id);
-	}));
+	EcsInterface::run(conn);
+
+	// ecs_interface.view.set_data(&ecs_interface);
+
+	// view.register_add_entity_callback(Box::new(|entity| {
+	// 	println!("Entity ID {}", entity.entity_id);
+
+	// 	world.create_entity().with(Position { x: 4.0, y: 7.0 }).build();
+	// }));
+
+
+
 
 	loop {
-		view.process();
+		// ecs_interface.process();
 	}
 	// let mut disp = worker::Dispatcher::create();
 	// disp.register_add_entity_callback(Box::new(|entity_id| {

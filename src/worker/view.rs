@@ -1,24 +1,27 @@
 use std::collections::HashMap;
+use std::cell::RefCell;
 use worker::EntityId;
 use worker::entity::Entity;
 use worker::connection::Connection;
 use worker::dispatcher::Dispatcher;
 use libc::c_void;
 
-pub struct View {
+pub struct View<'a, 'b: 'a, T: 'b> {
 	connection: Connection,
-	dispatcher: Box<Dispatcher<View>>,
+	dispatcher: Box<Dispatcher<View<'a, 'b, T>>>,
+	data: Option<&'b T>,
 
 	entities: HashMap<EntityId, Entity>,
 	added_this_cs: Vec<EntityId>,
 	add_entity_cbs: Vec<Box<Fn(&Entity)>>,
 }
 
-impl View {
-	pub fn new(connection: Connection) -> Box<View> {
+impl<'a, 'b, T> View<'a, 'b, T> {
+	pub fn new(connection: Connection) -> Box<View<'a, 'b, T>> {
 		let mut view = Box::new(View {
 			connection,
 			dispatcher: Dispatcher::create(),
+			data: None,
 			entities: HashMap::new(),
 			added_this_cs: Vec::new(),
 			add_entity_cbs: Vec::new(),
@@ -31,6 +34,10 @@ impl View {
 		view.register_dispatcher_ops();
 
 		view
+	}
+
+	pub fn set_data(&mut self, data: &'b T) {
+		self.data = Some(data);
 	}
 
 	pub fn process(&self) {
