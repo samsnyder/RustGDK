@@ -12,6 +12,7 @@ pub struct EcsInterface {
 impl EcsInterface {
 	pub fn new(connection: Connection) -> EcsInterface {
 		let world = Rc::new(RefCell::new(World::new()));
+		
 		world.borrow_mut().register::<Position>();
 
 		let view = View::new(connection, world.clone());
