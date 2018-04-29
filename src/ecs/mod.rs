@@ -1,39 +1,34 @@
 use specs::World;
 use std::rc::Rc;
+use std::cell::RefCell;
 use worker::{View, Connection};
 use schema::standard_library::Position;
 
-pub struct EcsInterface<'a> {
-	world: World,
-	view: Box<View<'a, 'a, EcsInterface<'a>>>
+pub struct EcsInterface {
+	world: Rc<RefCell<World>>,
+	view: Rc<RefCell<View<World>>>
 }
 
-impl<'a> EcsInterface<'a> {
-	pub fn run(connection: Connection) {
+impl EcsInterface {
+	pub fn new(connection: Connection) -> EcsInterface {
+		let world = Rc::new(RefCell::new(World::new()));
+		world.borrow_mut().register::<Position>();
 
-		let mut view = View::new(connection);
-		let mut world = World::new();
-		world.register::<Position>();
+		let view = View::new(connection, world.clone());
 
-		// view.register_add_entity_callback(Box::new(|entity| {
-		// 	println!("Entity ID {}", entity.entity_id);
+		view.borrow_mut().register_add_entity_callback(Box::new(|_, world, entity| {
+			println!("Entity ID {}", entity.entity_id);
 
-		// 	world.create_entity().with(Position { x: 4.0, y: 7.0 }).build();
-		// }));
+			world.borrow_mut().create_entity().with(Position { x: 4.0, y: 7.0 }).build();
+		}));
 
-		let mut ecs_interface = Box::new(EcsInterface {
+		EcsInterface {
 			world,
 			view
-		});
-
-		{
-			ecs_interface.view.set_data(&ecs_interface);
 		}
-
-		// ecs_interface
 	}
 
 	pub fn process(&self) {
-		self.view.process();
+		self.view.borrow().process();
 	}
 }

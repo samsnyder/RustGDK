@@ -7,8 +7,6 @@ mod ecs;
 mod schema;
 
 use rand::Rng;
-use specs::World;
-use schema::standard_library::Position;
 use ecs::EcsInterface;
 
 fn main() {
@@ -19,7 +17,7 @@ fn main() {
 
 	// let mut view = worker::View::new(conn);
 
-	EcsInterface::run(conn);
+	let ecs_interface = EcsInterface::new(conn);
 
 	// ecs_interface.view.set_data(&ecs_interface);
 
@@ -33,7 +31,7 @@ fn main() {
 
 
 	loop {
-		// ecs_interface.process();
+		ecs_interface.process();
 	}
 	// let mut disp = worker::Dispatcher::create();
 	// disp.register_add_entity_callback(Box::new(|entity_id| {
