@@ -8,6 +8,25 @@ mod schema;
 
 use rand::Rng;
 use ecs::EcsInterface;
+use specs::{ReadStorage, System, World, DispatcherBuilder};
+use specs::RunNow;
+use schema::standard_library::Position;
+
+
+struct HelloWorld;
+
+impl<'a> System<'a> for HelloWorld {
+    type SystemData = ReadStorage<'a, Position>;
+
+    fn run(&mut self, position: Self::SystemData) {
+        use specs::Join;
+
+        for position in position.join() {
+            // println!("Hello, {:?}", &position);
+        }
+    }
+}
+
 
 fn main() {
 	let mut worker_id = String::from("RustWorker");
@@ -17,7 +36,7 @@ fn main() {
 
 	// let mut view = worker::View::new(conn);
 
-	let ecs_interface = EcsInterface::new(conn);
+	
 
 	// ecs_interface.view.set_data(&ecs_interface);
 
@@ -27,6 +46,17 @@ fn main() {
 	// 	world.create_entity().with(Position { x: 4.0, y: 7.0 }).build();
 	// }));
 
+	let mut system = HelloWorld;
+	
+	let mut dispatcher = DispatcherBuilder::new()
+	    .add(system, "hello_world", &[])
+	    .build();
+
+	let mut ecs_interface = EcsInterface::new(conn, dispatcher);
+
+	// dispatcher.dispatch(&ecs_interface.world.borrow().res);
+
+	// println!("dasdasdas");
 
 
 

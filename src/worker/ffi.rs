@@ -49,7 +49,12 @@ use worker::{EntityId, ComponentId};
 	pub schema_type: *const c_void,
 	user_handle: *const c_void
 }
-
+#[repr(C)] pub struct Worker_ComponentUpdate {
+	reserved: *const c_void,
+	pub component_id: ComponentId,
+	pub schema_type: *const c_void,
+	user_handle: *const c_void
+}
 
 #[repr(C)] pub struct Worker_CriticalSectionOp {
 	pub in_critical_section: u8
@@ -60,6 +65,10 @@ use worker::{EntityId, ComponentId};
 #[repr(C)] pub struct Worker_AddComponentOp {
 	pub entity_id: EntityId,
 	pub data: Worker_ComponentData
+}
+#[repr(C)] pub struct Worker_ComponentUpdateOp {
+	pub entity_id: EntityId,
+	pub update: Worker_ComponentUpdate
 }
 
 
@@ -92,5 +101,7 @@ extern {
     	data: *mut c_void, callback: extern fn(*mut c_void, *const Worker_AddEntityOp));
     pub fn Worker_Dispatcher_SetAddComponentCallback(disp: *const Worker_Dispatcher,
     	data: *mut c_void, callback: extern fn(*mut c_void, *const Worker_AddComponentOp));
+    pub fn Worker_Dispatcher_SetComponentUpdateCallback(disp: *const Worker_Dispatcher,
+    	data: *mut c_void, callback: extern fn(*mut c_void, *const Worker_ComponentUpdateOp));
    
 }

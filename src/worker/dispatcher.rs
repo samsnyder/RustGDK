@@ -9,7 +9,8 @@ pub struct Dispatcher<T> {
 	
 	critical_section_cbs: Vec<Box<FnMut(Rc<RefCell<T>>, bool)>>,
 	add_entity_cbs: Vec<Box<FnMut(Rc<RefCell<T>>, EntityId)>>,
-	add_component_cbs: Vec<Box<FnMut(Rc<RefCell<T>>, EntityId, ComponentId, *const c_void)>>
+	add_component_cbs: Vec<Box<FnMut(Rc<RefCell<T>>, EntityId, ComponentId, *const c_void)>>,
+	component_update_cbs: Vec<Box<FnMut(Rc<RefCell<T>>, EntityId, ComponentId)>>
 }
 
 impl<T> Drop for Dispatcher<T> {
@@ -29,7 +30,8 @@ impl<T> Dispatcher<T> {
 				
 				critical_section_cbs: Vec::new(),
 				add_entity_cbs: Vec::new(),
-				add_component_cbs: Vec::new()
+				add_component_cbs: Vec::new(),
+				component_update_cbs: Vec::new()
 			});
 
 
@@ -43,6 +45,9 @@ impl<T> Dispatcher<T> {
 			ffi::Worker_Dispatcher_SetAddComponentCallback(dispatcher.pointer, 
 				dispatcher_ptr,
 				on_add_component::<T>);
+			ffi::Worker_Dispatcher_SetComponentUpdateCallback(dispatcher.pointer, 
+				dispatcher_ptr,
+				on_component_update::<T>);
 
 			dispatcher
 		}
@@ -70,6 +75,10 @@ impl<T> Dispatcher<T> {
 		self.add_component_cbs.push(cb);
 	}
 
+	pub fn register_component_update_callback(&mut self, cb: Box<FnMut(Rc<RefCell<T>>, EntityId, ComponentId)>) {
+		self.component_update_cbs.push(cb);
+	}
+
 	fn on_critical_section(&mut self, op: *const ffi::Worker_CriticalSectionOp) {
 		unsafe {
 			let in_critical_section = (*op).in_critical_section == 1;
@@ -95,10 +104,6 @@ impl<T> Dispatcher<T> {
 				}
 				None => {}
 			}
-			// let dispatcher_data: &mut T = &mut *(self.data.unwrap() as *mut T);
-			// for cb in self.add_entity_cbs.iter_mut() {
-			// 	(*cb)(self.data.unwrap(), entity_id);
-			// }
 		}
 	}
 
@@ -115,10 +120,22 @@ impl<T> Dispatcher<T> {
 				}
 				None => {}
 			}
-			// let dispatcher_data: &mut T = &mut *(self.data.unwrap() as *mut T);
-			// for cb in self.add_component_cbs.iter_mut() {
-			// 	(*cb)(self.data.unwrap(), entity_id, component_id, data);
-			// }
+		}
+	}
+
+	fn on_component_update(&mut self, op: *const ffi::Worker_ComponentUpdateOp) {
+		unsafe {
+			let entity_id = (*op).entity_id;
+			let component_id = (*op).update.component_id;
+			// let component_update = (*op).data.schema_type;
+			match self.data {
+				Some(ref data) => {
+					for cb in self.component_update_cbs.iter_mut() {
+						(*cb)(data.clone(), entity_id, component_id);
+					}
+				}
+				None => {}
+			}
 		}
 	}
 }
@@ -138,5 +155,11 @@ extern fn on_add_entity<T>(dispatcher: *mut c_void, op: *const ffi::Worker_AddEn
 extern fn on_add_component<T>(dispatcher: *mut c_void, op: *const ffi::Worker_AddComponentOp) {
 	unsafe {
 		(*(dispatcher as *mut Dispatcher<T>)).on_add_component(op);
+	}
+}
+
+extern fn on_component_update<T>(dispatcher: *mut c_void, op: *const ffi::Worker_ComponentUpdateOp) {
+	unsafe {
+		(*(dispatcher as *mut Dispatcher<T>)).on_component_update(op);
 	}
 }
