@@ -298,6 +298,22 @@ impl<S: 'static + GeneratedSchema> World<S> {
     /// * The failure error message.
     ///
     /// Short circuiting is enabled for this command.
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// world.send_command(
+    ///     Transform::example_command(),
+    ///     100,
+    ///     ExampleRequest { param: 0.5 },
+    ///     |_world, entity_id, response| {
+    ///         println!("Command succeeded: {} {:?}", entity_id, response.reply);
+    ///     },
+    ///     |_world, status, message| {
+    ///         println!("Command failed: {:?} {}", status, message);
+    ///     },
+    /// );
+    /// ```
     pub fn send_command<C: 'static + Command<S>, A: 'static, F: 'static>(
         &mut self,
         _command: C,
@@ -329,6 +345,32 @@ impl<S: 'static + GeneratedSchema> World<S> {
     /// * A reference to this `World`.
     /// * The failure code.
     /// * The failure error message.
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// world.create_entity(
+    ///     EntityBuilder::new(vec![Worker::Type("visual"), Worker::Type("physics")])
+    ///         .with_component(
+    ///             Worker::Type("physics"),
+    ///             Position {
+    ///                 coords: Coordinates { x: 0.1, y: 0.2, z: 0.3 },
+    ///             },
+    ///         )
+    ///         .with_component(
+    ///             Worker::Specific(client_worker_id),
+    ///             Character {
+    ///                 health: 50,
+    ///             },
+    ///         ),
+    ///     |_world, entity_id| {
+    ///         println!("Created entity: {}", entity_id);
+    ///     },
+    ///     |_world, status, message| {
+    ///         println!("Failure creating entity: {:?} {}", status, message);
+    ///     },
+    /// );
+    /// ```
     pub fn create_entity<A: 'static, F: 'static>(
         &mut self,
         entity_template: EntityTemplate,
