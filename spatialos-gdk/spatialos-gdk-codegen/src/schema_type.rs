@@ -159,7 +159,7 @@ impl From<SchemaTypeDefinition> for BuiltInType {
             "sfixed32" => BuiltInType::SFixed32,
             "sfixed64" => BuiltInType::SFixed64,
             "float" => BuiltInType::Float,
-            "double" => BuiltInType::Double,    
+            "double" => BuiltInType::Double,
             "string" => BuiltInType::String,
             "bytes" => BuiltInType::Bytes,
             "EntityId" => BuiltInType::EntityId,
@@ -183,7 +183,7 @@ impl BuiltInType {
             BuiltInType::SFixed32 => "Sfixed32",
             BuiltInType::SFixed64 => "Sfixed64",
             BuiltInType::Float => "Float",
-            BuiltInType::Double => "Double",            
+            BuiltInType::Double => "Double",
             BuiltInType::String => "String",
             BuiltInType::Bytes => "BytesVec",
             BuiltInType::EntityId => "EntityId",
@@ -210,7 +210,7 @@ impl Type for BuiltInType {
             BuiltInType::SFixed32 => "i32",
             BuiltInType::SFixed64 => "i64",
             BuiltInType::Float => "f32",
-            BuiltInType::Double => "f64",            
+            BuiltInType::Double => "f64",
             BuiltInType::String => "String",
             BuiltInType::Bytes => "Vec<u8>",
             BuiltInType::EntityId => "EntityId",
@@ -272,12 +272,7 @@ impl Type for OptionType {
         format!("Option<{}>", self.value_type.rust_qualified_name())
     }
 
-    fn deserialise_code(
-        &self,
-        object_name: &String,
-        field_id: u32,
-        _: Option<String>,
-    ) -> Tokens {
+    fn deserialise_code(&self, object_name: &String, field_id: u32, _: Option<String>) -> Tokens {
         let get_count_code = self.count_code(object_name, field_id);
         let value_deserialise_code = self.value_type
             .deserialise_code(object_name, field_id, None);
@@ -332,12 +327,7 @@ impl Type for ListType {
         format!("Vec<{}>", self.value_type.rust_qualified_name())
     }
 
-    fn deserialise_code(
-        &self,
-        object_name: &String,
-        field_id: u32,
-        _: Option<String>,
-    ) -> Tokens {
+    fn deserialise_code(&self, object_name: &String, field_id: u32, _: Option<String>) -> Tokens {
         let rust_type_name = Ident::new(self.rust_qualified_name().as_str());
         let get_count_code = self.count_code(object_name, field_id);
         let value_deserialise_code =
@@ -405,12 +395,7 @@ impl Type for MapType {
         )
     }
 
-    fn deserialise_code(
-        &self,
-        object_name: &String,
-        field_id: u32,
-        _: Option<String>,
-    ) -> Tokens {
+    fn deserialise_code(&self, object_name: &String, field_id: u32, _: Option<String>) -> Tokens {
         let rust_type_name = Ident::new(self.rust_qualified_name().as_str());
         let get_count_code = self.count_code(object_name, field_id);
         let object_name = Ident::new(object_name.as_str());

@@ -7,14 +7,20 @@ use rand::Rng;
 use schema::Schema;
 use schema::demogame::Movement;
 use schema::improbable::Position;
-use spatialos_gdk::{Connection, ConnectionParameters, Entities, EntityId, System,
-                    World, WorldError, Write};
+use spatialos_gdk::{Connection, ConnectionParameters, Entities, EntityId, System, World,
+                    WorldError, Write};
 use std::{env, thread, time};
 
+// Include the code generated components which is build in the build.rs file.
 include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 
 const FRAME_INTERVAL_S: f64 = 1.0 / 30.0;
 
+// Define the components which we want to iterate over, as well as the access which
+// we would like.
+//
+// You can also use `ModifiedRead` and `ModifiedWrite` to only match entities where
+// the component value has changed since the last frame.
 #[derive(ComponentGroup)]
 pub struct MovementData<'a> {
     pub movement: Write<'a, Schema, Movement>,
@@ -26,6 +32,9 @@ struct MovementSystem {}
 
 impl System<Schema> for MovementSystem {
     fn on_update(&mut self, _world: &mut World<Schema>, entities: &mut Entities<Schema>) {
+        // `entities` can be used to iterate over the entities in the world.
+        // `_world` can be used to perform other actions like send commands or
+        // get a specific entity's data.
         for mut entity in entities.get::<MovementData>() {
             if *entity.movement.moving_right && entity.position.coords.x > 10.0 {
                 *entity.movement.moving_right = false;

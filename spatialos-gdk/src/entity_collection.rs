@@ -42,8 +42,8 @@ impl<'a, S: 'static + GeneratedSchema> Entities<'a, S> {
     /// for mut entity in entities.get::<MovementData>() {
     ///     entity.position.coords.x = rand::thread_rng().gen::<f64>();
     ///
-    ///     println!("Entity of type {} has an x value of {}", 
-    ///         *entity.metadata.entity_type, 
+    ///     println!("Entity of type {} has an x value of {}",
+    ///         *entity.metadata.entity_type,
     ///         entity.position.coords.x);
     /// }
     /// ```

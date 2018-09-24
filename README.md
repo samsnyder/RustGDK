@@ -24,7 +24,7 @@ It supports:
 
 It does not support (but I plan to add):
 
-* Dynamically adding or removing non-SpatialOS components
+* Non-SpatialOS components
 * Schema enums
 * The Locator
 * Entity queries
@@ -62,7 +62,7 @@ Please see the documentation for more examples of how to use the API. To open th
 please run:
 
 ```shell
-$ cd demo-project/workers/server
+$ cd spatialos-gdk
 $ cargo doc -p spatialos-gdk --open
 ```
 

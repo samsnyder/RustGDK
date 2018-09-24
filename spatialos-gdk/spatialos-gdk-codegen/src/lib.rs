@@ -68,7 +68,7 @@ fn generate_json_ast<P: AsRef<Path>>(json_dir: &P) -> bool {
             json_dir.as_ref().to_str().unwrap(),
             "--language",
             "ast_json",
-            "--force"
+            "--force",
         ])
         .output()
         .expect("failed to execute process");

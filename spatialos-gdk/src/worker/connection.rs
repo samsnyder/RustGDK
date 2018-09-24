@@ -6,7 +6,7 @@ use worker::{ffi, ComponentId, EntityId, FFIEnum, LogLevel, OpList, RequestId};
 
 pub enum ConnectionType {
     RakNet,
-    TCP
+    TCP,
 }
 
 pub struct NetworkParameters {
@@ -17,7 +17,7 @@ pub struct NetworkParameters {
     tcp_send_buffer_size: u32,
     tcp_receive_buffer_size: u32,
     tcp_no_delay: bool,
-    connection_timeout_millis: u64
+    connection_timeout_millis: u64,
 }
 
 impl Default for NetworkParameters {
@@ -27,16 +27,20 @@ impl Default for NetworkParameters {
             NetworkParameters {
                 use_external_ip: ffi_params.use_external_ip != 0,
                 connection_type: match ffi_params.connection_type as u32 {
-                    ffi::Worker_NetworkConnectionType::WORKER_NETWORK_CONNECTION_TYPE_TCP => ConnectionType::TCP,
-                    ffi::Worker_NetworkConnectionType::WORKER_NETWORK_CONNECTION_TYPE_RAKNET => ConnectionType::RakNet,
-                    unkown => panic!("Unknown network protocol: {}", unkown)
+                    ffi::Worker_NetworkConnectionType::WORKER_NETWORK_CONNECTION_TYPE_TCP => {
+                        ConnectionType::TCP
+                    }
+                    ffi::Worker_NetworkConnectionType::WORKER_NETWORK_CONNECTION_TYPE_RAKNET => {
+                        ConnectionType::RakNet
+                    }
+                    unkown => panic!("Unknown network protocol: {}", unkown),
                 },
                 raknet_heartbeat_timeout_millis: ffi_params.raknet.heartbeat_timeout_millis,
                 tcp_multiplex_level: ffi_params.tcp.multiplex_level,
                 tcp_send_buffer_size: ffi_params.tcp.send_buffer_size,
                 tcp_receive_buffer_size: ffi_params.tcp.receive_buffer_size,
                 tcp_no_delay: ffi_params.tcp.no_delay != 0,
-                connection_timeout_millis: ffi_params.connection_timeout_millis
+                connection_timeout_millis: ffi_params.connection_timeout_millis,
             }
         }
     }
@@ -46,16 +50,20 @@ impl From<NetworkParameters> for ffi::Worker_NetworkParameters {
     fn from(value: NetworkParameters) -> Self {
         unsafe {
             let mut ffi_params = ffi::Worker_DefaultConnectionParameters().network;
-            ffi_params.use_external_ip = if value.use_external_ip {1}else{0};
+            ffi_params.use_external_ip = if value.use_external_ip { 1 } else { 0 };
             ffi_params.connection_type = match value.connection_type {
-                ConnectionType::TCP => ffi::Worker_NetworkConnectionType::WORKER_NETWORK_CONNECTION_TYPE_TCP,
-                ConnectionType::RakNet => ffi::Worker_NetworkConnectionType::WORKER_NETWORK_CONNECTION_TYPE_RAKNET
+                ConnectionType::TCP => {
+                    ffi::Worker_NetworkConnectionType::WORKER_NETWORK_CONNECTION_TYPE_TCP
+                }
+                ConnectionType::RakNet => {
+                    ffi::Worker_NetworkConnectionType::WORKER_NETWORK_CONNECTION_TYPE_RAKNET
+                }
             } as u8;
             ffi_params.raknet.heartbeat_timeout_millis = value.raknet_heartbeat_timeout_millis;
             ffi_params.tcp.multiplex_level = value.tcp_multiplex_level;
             ffi_params.tcp.send_buffer_size = value.tcp_send_buffer_size;
             ffi_params.tcp.receive_buffer_size = value.tcp_receive_buffer_size;
-            ffi_params.tcp.no_delay = if value.tcp_no_delay {1}else{0};
+            ffi_params.tcp.no_delay = if value.tcp_no_delay { 1 } else { 0 };
             ffi_params.connection_timeout_millis = value.connection_timeout_millis;
 
             ffi_params
@@ -84,11 +92,18 @@ impl Default for ConnectionParameters {
                 send_queue_capacity: ffi_params.send_queue_capacity,
                 receive_queue_capacity: ffi_params.receive_queue_capacity,
                 log_message_queue_capacity: ffi_params.log_message_queue_capacity,
-                built_in_metrics_report_period_millis: ffi_params.built_in_metrics_report_period_millis,
-                enable_protocol_logging_at_startup: ffi_params.enable_protocol_logging_at_startup != 0,
-                protocol_log_prefix: CStr::from_ptr(ffi_params.protocol_logging.log_prefix).to_owned().into_string().unwrap(),
+                built_in_metrics_report_period_millis: ffi_params
+                    .built_in_metrics_report_period_millis,
+                enable_protocol_logging_at_startup: ffi_params.enable_protocol_logging_at_startup
+                    != 0,
+                protocol_log_prefix: CStr::from_ptr(ffi_params.protocol_logging.log_prefix)
+                    .to_owned()
+                    .into_string()
+                    .unwrap(),
                 max_protocol_log_files: ffi_params.protocol_logging.max_log_files,
-                max_protocol_log_file_size_bytes: ffi_params.protocol_logging.max_log_file_size_bytes,
+                max_protocol_log_file_size_bytes: ffi_params
+                    .protocol_logging
+                    .max_log_file_size_bytes,
             }
         }
     }
@@ -102,12 +117,20 @@ impl From<ConnectionParameters> for ffi::Worker_ConnectionParameters {
             ffi_params.send_queue_capacity = value.send_queue_capacity;
             ffi_params.receive_queue_capacity = value.receive_queue_capacity;
             ffi_params.log_message_queue_capacity = value.log_message_queue_capacity;
-            ffi_params.built_in_metrics_report_period_millis = value.built_in_metrics_report_period_millis;
-            ffi_params.enable_protocol_logging_at_startup = if value.enable_protocol_logging_at_startup {1}else{0};
+            ffi_params.built_in_metrics_report_period_millis =
+                value.built_in_metrics_report_period_millis;
+            ffi_params.enable_protocol_logging_at_startup =
+                if value.enable_protocol_logging_at_startup {
+                    1
+                } else {
+                    0
+                };
             // This will leak this string.
-            ffi_params.protocol_logging.log_prefix = CString::new(value.protocol_log_prefix).unwrap().into_raw();
+            ffi_params.protocol_logging.log_prefix =
+                CString::new(value.protocol_log_prefix).unwrap().into_raw();
             ffi_params.protocol_logging.max_log_files = value.max_protocol_log_files;
-            ffi_params.protocol_logging.max_log_file_size_bytes = value.max_protocol_log_file_size_bytes;
+            ffi_params.protocol_logging.max_log_file_size_bytes =
+                value.max_protocol_log_file_size_bytes;
 
             ffi_params
         }
@@ -136,7 +159,7 @@ impl Connection {
         hostname: &str,
         port: u16,
         worker_id: &str,
-        params: ConnectionParameters
+        params: ConnectionParameters,
     ) -> Connection {
         unsafe {
             let worker_type = CString::new(worker_type).unwrap();
@@ -150,18 +173,12 @@ impl Connection {
             params.default_component_vtable = default_vtable_ptr;
 
             let params = Box::leak(params);
-            let future = ffi::Worker_ConnectAsync(
-                hostname.into_raw(),
-                port,
-                worker_id.into_raw(),
-                params,
-            );
+            let future =
+                ffi::Worker_ConnectAsync(hostname.into_raw(), port, worker_id.into_raw(), params);
             let pointer = ffi::Worker_ConnectionFuture_Get(future, ptr::null());
             ffi::Worker_ConnectionFuture_Destroy(future);
 
-            Connection {
-                pointer,
-            }
+            Connection { pointer }
         }
     }
 
@@ -176,12 +193,7 @@ impl Connection {
         unsafe { ffi::Worker_Connection_IsConnected(self.pointer) != 0 }
     }
 
-    pub fn send_log_message(
-        &mut self,
-        level: LogLevel,
-        logger_name: String,
-        message: String,
-    ) {
+    pub fn send_log_message(&mut self, level: LogLevel, logger_name: String, message: String) {
         unsafe {
             let logger_name = CString::new(logger_name).unwrap();
             let message = CString::new(message).unwrap();
@@ -209,11 +221,7 @@ impl Connection {
             component_update.component_id = component_id;
             component_update.schema_type = Box::into_raw(update);
 
-            ffi::Worker_Connection_SendComponentUpdate(
-                self.pointer,
-                entity_id,
-                &component_update,
-            );
+            ffi::Worker_Connection_SendComponentUpdate(self.pointer, entity_id, &component_update);
             Box::from_raw(component_update.schema_type);
         }
     }
@@ -268,11 +276,7 @@ impl Connection {
             command_response.schema_type = Box::into_raw(response);
 
             Box::from_raw(command_response.schema_type);
-            ffi::Worker_Connection_SendCommandResponse(
-                self.pointer,
-                request_id,
-                &command_response,
-            )
+            ffi::Worker_Connection_SendCommandResponse(self.pointer, request_id, &command_response)
         }
     }
 

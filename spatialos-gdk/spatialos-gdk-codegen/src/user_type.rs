@@ -1,5 +1,5 @@
 use field::Field;
-use json::{TypeDefinition};
+use json::TypeDefinition;
 use quote::Tokens;
 use schema_type::Type;
 use syn::Ident;
@@ -66,7 +66,8 @@ impl Type for UserType {
         let object_name = Ident::new(object_name.as_str());
         let index = Ident::new(index.unwrap_or(String::from("0")).as_str());
         let rust_qualified_name = Ident::new(self.rust_qualified_name());
-        quote!(#rust_qualified_name::deserialise(ffi::Schema_IndexObject(#object_name, #field_id, #index)))
+        quote!(#rust_qualified_name::deserialise(
+            ffi::Schema_IndexObject(#object_name, #field_id, #index)))
     }
 
     fn serialise_code(&self, object_name: &String, field_id: u32, value_name: &String) -> Tokens {

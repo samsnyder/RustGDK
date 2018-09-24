@@ -21,7 +21,10 @@ fn main() {
 
     unpack_worker_package("worker_sdk", package_name, worker_package_dir.clone());
 
-    println!("cargo:rustc-link-search={}", worker_package_dir.join("lib").display());
+    println!(
+        "cargo:rustc-link-search={}",
+        worker_package_dir.join("lib").display()
+    );
 
     let libs = vec![
         "worker",
@@ -45,8 +48,18 @@ fn main() {
 
     let bindings = bindgen::Builder::default()
         .constified_enum_module(".*")
-        .header(worker_package_dir.join("include/improbable/c_worker.h").to_str().unwrap())
-        .header(worker_package_dir.join("include/improbable/c_schema.h").to_str().unwrap())
+        .header(
+            worker_package_dir
+                .join("include/improbable/c_worker.h")
+                .to_str()
+                .unwrap(),
+        )
+        .header(
+            worker_package_dir
+                .join("include/improbable/c_schema.h")
+                .to_str()
+                .unwrap(),
+        )
         .generate()
         .expect("Unable to generate bindings");
 
@@ -64,7 +77,7 @@ fn unpack_worker_package<P: AsRef<Path>>(package_type: &str, package_name: &str,
             "unpack-to",
             package_type,
             package_name,
-            directory.as_ref().to_str().unwrap()
+            directory.as_ref().to_str().unwrap(),
         ])
         .output()
         .expect("failed to execute process");

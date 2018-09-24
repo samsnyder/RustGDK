@@ -2,6 +2,7 @@ use TagComponentArray;
 use downcast_rs::Downcast;
 use entity::Entity;
 // use std::cell::RefCell;
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::rc::Rc;
@@ -10,8 +11,6 @@ use worker::schema::{Component, GeneratedSchema};
 use worker::schema::{ComponentDataInterface, ComponentUpdateInterface};
 use worker::{Authority, ComponentId, Connection, EntityId};
 use world::{PartialEntity, WorldTime};
-use rayon::iter::{ParallelIterator, IntoParallelIterator};
-
 
 use debug_cell::RefCell;
 

@@ -72,7 +72,6 @@ pub struct EntityTemplate {
 }
 
 impl EntityTemplate {
-
     /// Creates a new `EntityTemplate` with it's read ACL set to the
     /// union of the given `Worker` values.
     pub fn new(read_access: Vec<Worker>) -> EntityTemplate {

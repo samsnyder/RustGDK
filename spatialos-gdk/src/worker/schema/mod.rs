@@ -1,5 +1,5 @@
 use worker::ffi::{Schema_CommandRequest, Schema_CommandResponse, Schema_ComponentData,
-                       Schema_ComponentUpdate};
+                  Schema_ComponentUpdate};
 
 use ComponentBitField;
 use std::any::Any;

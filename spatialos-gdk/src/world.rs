@@ -3,8 +3,8 @@ use chunk::Chunk;
 use commands::Commands;
 use component_group::{Read, Write};
 use entity::Entity;
-use entity_template::EntityTemplate;
 use entity_collection::{Entities, EntityCollection};
+use entity_template::EntityTemplate;
 use shared_resources::SharedResources;
 use std::any::Any;
 // use std::cell::RefCell;
@@ -15,14 +15,13 @@ use worker::schema::{Command, Component, GeneratedSchema, GlobalComponentDataInt
 use worker::{Authority, CommandStatus, ComponentId, Connection, Dispatcher, EntityId, LogLevel,
              RequestId};
 
-
 use debug_cell::RefCell;
 
 /// Possible errors which can be thrown by the `World`.
 pub enum WorldError {
     /// We tried to perform an operation which required a connection to SpatialOS, but
     /// the connection to SpatialOS is closed.
-    ConnectionLost
+    ConnectionLost,
 }
 
 #[doc(hidden)]
@@ -168,18 +167,10 @@ impl<S: 'static + GeneratedSchema> World<S> {
     /// Sends a log message to SpatialOS, as well as logging it to `stdout`.
     ///
     /// It is invalid to call this method if the connection is no longer active.
-    pub fn log(
-        &mut self,
-        level: LogLevel,
-        logger_name: &str,
-        message: &str,
-    ) {
+    pub fn log(&mut self, level: LogLevel, logger_name: &str, message: &str) {
         println!("{:?} [{}] {}", level, logger_name, message);
-        self.connection.send_log_message(
-            level,
-            String::from(logger_name),
-            String::from(message),
-        );
+        self.connection
+            .send_log_message(level, String::from(logger_name), String::from(message));
     }
 
     /// Get's the shared resource of type `R`, if it exists.

@@ -2,7 +2,7 @@ use command::Command;
 use event::Event;
 use json::ComponentDefinition;
 use quote::Tokens;
-use schema_type::{ReferencedUserType};
+use schema_type::ReferencedUserType;
 use syn::Ident;
 use to_rust_qualified_name;
 
@@ -117,21 +117,24 @@ impl Component {
                     data.apply_update(update);
                 }
 
-                fn extract_data_borrow(data: &<Schema as GeneratedSchema>::ComponentData) -> Option<&Self::Data> {
+                fn extract_data_borrow(data: &<Schema as GeneratedSchema>::ComponentData)
+                    -> Option<&Self::Data> {
                     match data {
                         &ComponentData::#enum_name(ref data) => Some(data),
                         _ => None
                     }
                 }
 
-                fn extract_data(data: <Schema as GeneratedSchema>::ComponentData) -> Option<Self::Data> {
+                fn extract_data(data: <Schema as GeneratedSchema>::ComponentData)
+                    -> Option<Self::Data> {
                     match data {
                         ComponentData::#enum_name(data) => Some(data),
                         _ => None
                     }
                 }
 
-                fn extract_update(update: &<Schema as GeneratedSchema>::ComponentUpdate) -> Option<&Self::Update> {
+                fn extract_update(update: &<Schema as GeneratedSchema>::ComponentUpdate)
+                    -> Option<&Self::Update> {
                     match update {
                         &ComponentUpdate::#enum_name(ref update) => Some(update),
                         _ => None
@@ -190,7 +193,8 @@ impl Component {
 
             #[allow(dead_code, unused_variables)]
             impl ComponentDataInterface<Schema> for #data_name {
-                fn deserialise_data(data: Box<ffi::Schema_ComponentData>) -> <Schema as GeneratedSchema>::ComponentData {
+                fn deserialise_data(data: Box<ffi::Schema_ComponentData>)
+                    -> <Schema as GeneratedSchema>::ComponentData {
                     unsafe {
                         let data_raw = Box::into_raw(data);
                         let fields = ffi::Schema_GetComponentDataFields(data_raw);
@@ -242,7 +246,8 @@ impl Component {
 
             #[allow(dead_code, unused_variables)]
             impl ComponentUpdateInterface<Schema> for #update_name {
-                fn deserialise_update(update_box: Box<ffi::Schema_ComponentUpdate>) -> <Schema as GeneratedSchema>::ComponentUpdate {
+                fn deserialise_update(update_box: Box<ffi::Schema_ComponentUpdate>)
+                    -> <Schema as GeneratedSchema>::ComponentUpdate {
                     unsafe {
                         let update = Box::into_raw(update_box);
                         let fields = ffi::Schema_GetComponentUpdateFields(update);

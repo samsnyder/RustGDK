@@ -109,7 +109,8 @@ impl Command {
                 }
                 fn serialise_request(&self) -> Box<Schema_CommandRequest> {
                     unsafe {
-                        let request = ffi::Schema_CreateCommandRequest(#component_name::component_id(), #command_index);
+                        let request = ffi::Schema_CreateCommandRequest(
+                            #component_name::component_id(), #command_index);
                         let object = ffi::Schema_GetCommandRequestObject(request);
 
                         self.serialise(object);
@@ -131,7 +132,8 @@ impl Command {
                 }
                 fn serialise_response(&self) -> Box<Schema_CommandResponse> {
                     unsafe {
-                        let response = ffi::Schema_CreateCommandResponse(#component_name::component_id(), #command_index);
+                        let response = ffi::Schema_CreateCommandResponse(
+                            #component_name::component_id(), #command_index);
                         let object = ffi::Schema_GetCommandResponseObject(response);
 
                         self.serialise(object);

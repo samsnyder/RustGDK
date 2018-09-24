@@ -1,14 +1,14 @@
 mod connection;
 mod dispatcher;
-mod snapshot;
 pub mod ffi;
 pub mod schema;
+mod snapshot;
 
-pub use self::connection::{ConnectionParameters, Connection};
+pub use self::connection::{Connection, ConnectionParameters};
 pub use self::dispatcher::Dispatcher;
 pub use self::snapshot::SnapshotOutputStream;
 
-use std::{slice};
+use std::slice;
 
 pub type EntityId = i64;
 pub type ComponentId = u32;
@@ -40,8 +40,7 @@ impl FFIEnum for LogLevel {}
 pub enum Authority {
     NotAuthoritative = ffi::Worker_Authority::WORKER_AUTHORITY_NOT_AUTHORITATIVE as u8,
     Authoritative = ffi::Worker_Authority::WORKER_AUTHORITY_AUTHORITATIVE as u8,
-    AuthorityLossImminent =
-        ffi::Worker_Authority::WORKER_AUTHORITY_AUTHORITY_LOSS_IMMINENT as u8,
+    AuthorityLossImminent = ffi::Worker_Authority::WORKER_AUTHORITY_AUTHORITY_LOSS_IMMINENT as u8,
 }
 impl FFIEnum for Authority {}
 
@@ -169,9 +168,10 @@ pub struct OpList<'a> {
 impl<'a> OpList<'a> {
     pub fn new(pointer: *mut ffi::Worker_OpList) -> OpList<'a> {
         unsafe {
-            let ops: Vec<Op> = slice::from_raw_parts((*pointer).ops, (*pointer).op_count as usize).iter().map(|worker_op| {
-                Op::from_union(worker_op)
-            }).collect();
+            let ops: Vec<Op> = slice::from_raw_parts((*pointer).ops, (*pointer).op_count as usize)
+                .iter()
+                .map(|worker_op| Op::from_union(worker_op))
+                .collect();
 
             OpList { pointer, ops }
         }

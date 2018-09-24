@@ -10,12 +10,12 @@ mod chunk;
 mod commands;
 mod component_group;
 mod entity;
-mod entity_template;
 mod entity_collection;
+mod entity_template;
 mod shared_resources;
+mod snapshot;
 mod system;
 mod world;
-mod snapshot;
 
 #[doc(hidden)]
 pub mod worker;
@@ -23,12 +23,12 @@ pub mod worker;
 pub use self::chunk::{Chunk, ComponentStorage};
 pub use self::component_group::{ComponentGroup, ModifiedRead, ModifiedWrite, Read,
                                 UnsafeSendablePointer, Write};
-pub use self::entity_template::{EntityTemplate, Worker};
 pub use self::entity_collection::Entities;
-pub use self::system::System;
-pub use self::world::{World, WorldTime, WorldError};
-pub use self::worker::{EntityId, Connection, LogLevel, ConnectionParameters};
+pub use self::entity_template::{EntityTemplate, Worker};
 pub use self::snapshot::Snapshot;
+pub use self::system::System;
+pub use self::worker::{Connection, ConnectionParameters, EntityId, LogLevel};
+pub use self::world::{World, WorldError, WorldTime};
 
 use chunk::MAX_ENTITIES_PER_CHUNK;
 use worker::ComponentId;

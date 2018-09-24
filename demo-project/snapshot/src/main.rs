@@ -1,9 +1,9 @@
 extern crate spatialos_gdk;
 
 use schema::Schema;
-use schema::improbable::{Position, Coordinates, Persistence};
 use schema::demogame::Movement;
-use spatialos_gdk::{EntityTemplate, Worker, Snapshot};
+use schema::improbable::{Coordinates, Persistence, Position};
+use spatialos_gdk::{EntityTemplate, Snapshot, Worker};
 
 include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 
@@ -23,10 +23,7 @@ fn main() {
                     },
                 },
             )
-            .with_component(
-                Worker::None,
-                Persistence {},
-            ),
+            .with_component(Worker::None, Persistence {}),
         EntityTemplate::new(vec![Worker::Type("server")])
             .set_entity_id(2)
             .with_component(
@@ -39,10 +36,7 @@ fn main() {
                     },
                 },
             )
-            .with_component(
-                Worker::None,
-                Persistence {},
-            ),
+            .with_component(Worker::None, Persistence {}),
         EntityTemplate::new(vec![Worker::Type("server")])
             .set_entity_id(3)
             .with_component(
@@ -55,16 +49,8 @@ fn main() {
                     },
                 },
             )
-            .with_component(
-                Worker::None,
-                Persistence {},
-            )
-            .with_component(
-                Worker::Type("server"),
-                Movement {
-                    moving_right: true
-                },
-            )
+            .with_component(Worker::None, Persistence {})
+            .with_component(Worker::Type("server"), Movement { moving_right: true }),
     ];
 
     Snapshot::<Schema>::create(filepath, entities.into_iter());

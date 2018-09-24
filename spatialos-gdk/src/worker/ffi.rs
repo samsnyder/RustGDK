@@ -4,20 +4,19 @@
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
-use worker::schema::FieldId;
-use std::slice;
 use std::ffi::CString;
+use std::slice;
+use worker::schema::FieldId;
 
 // TODO - These will leak. They need to be freed.
-pub unsafe fn Schema_AddString(object: *mut Schema_Object, field_id: FieldId, value: &String) -> *const u8 {
+pub unsafe fn Schema_AddString(
+    object: *mut Schema_Object,
+    field_id: FieldId,
+    value: &String,
+) -> *const u8 {
     let cstring = CString::new(value.as_str()).unwrap();
     let raw_ptr = cstring.into_raw() as *const u8;
-    Schema_AddBytes(
-        object,
-        field_id,
-        raw_ptr,
-        value.len() as u32,
-    );
+    Schema_AddBytes(object, field_id, raw_ptr, value.len() as u32);
     raw_ptr
 }
 
@@ -39,7 +38,7 @@ pub unsafe fn Schema_IndexString(
 }
 
 pub unsafe fn Schema_AddBoolean(object: *mut Schema_Object, field_id: FieldId, value: bool) {
-    Schema_AddBool(object, field_id, if value {1}else{0});
+    Schema_AddBool(object, field_id, if value { 1 } else { 0 });
 }
 
 pub unsafe fn Schema_GetBooleanCount(object: *mut Schema_Object, field_id: FieldId) -> u32 {
@@ -55,7 +54,11 @@ pub unsafe fn Schema_IndexBoolean(
 }
 
 // TODO - These will leak. They need to be freed.
-pub unsafe fn Schema_AddBytesVec(object: *mut Schema_Object, field_id: FieldId, value: &Vec<u8>) -> *const u8 {
+pub unsafe fn Schema_AddBytesVec(
+    object: *mut Schema_Object,
+    field_id: FieldId,
+    value: &Vec<u8>,
+) -> *const u8 {
     let len = value.len() as u32;
     let value = value.clone().into_boxed_slice();
     let value_ptr = Box::into_raw(value) as *const u8;
