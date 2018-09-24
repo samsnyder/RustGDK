@@ -9,4 +9,4 @@ build = "src/build.rs"
 spatialos-gdk = { path = "../../spatialos-gdk" }
 
 [build-dependencies]
-spatialos-gdk-codegen = { path = "../../spatialos-gdk-codegen" }
+spatialos-gdk-codegen = { path = "../../spatialos/spatialos-gdk-codegen" }
