@@ -11,4 +11,4 @@ spatialos-gdk = { path = "../../../spatialos-gdk" }
 spatialos-gdk-derive = { path = "../../../spatialos-gdk/spatialos-gdk-derive" }
 
 [build-dependencies]
-spatialos-gdk-codegen = { path = "../../../spatialos/spatialos-gdk-codegen" }
+spatialos-gdk-codegen = { path = "../../../spatialos-gdk/spatialos-gdk-codegen" }
