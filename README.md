@@ -1,5 +1,5 @@
-> DISCLAIMER: This is not an official Improbable GDK. I made this to try and learn Rust,
-  and it is untested, undocumented and still missing features. Please use at your own risk!
+> This is not an official Improbable GDK. I made this to try and learn Rust,
+  and it is **untested**, **undocumented** and still **missing features**. Please use at your own risk!
 
 > Also, I have only tested this on OS X, so it will likely not immediately work for Windows or Linux.
 
@@ -12,8 +12,8 @@ with any changes to components replicated over SpatialOS.
 
 It supports:
 
-* Fast iteration over [entities](https://docs.improbable.io/reference/latest/shared/glossary#entity),
-  with a guaranteed linear memory layout
+* Iteration over [entities](https://docs.improbable.io/reference/latest/shared/glossary#entity),
+  with a guaranteed linear memory layout (implemented in a similar way to the Unity ECS)
 * Parallel iteration over entities
 * Iterating over only [components](https://docs.improbable.io/reference/latest/shared/glossary#component) which have changed
 * Sending and receiving [events](https://docs.improbable.io/reference/latest/shared/glossary#event)
@@ -21,6 +21,16 @@ It supports:
 * Creating and deleting entities
 * Shared local resources between systems
 * All in Rust!
+
+It does not support (but I plan to add):
+
+* Dynamically adding or removing non-SpatialOS components
+* Schema enums
+* The Locator
+* Entity queries
+* Worker flags
+* Reading snapshots
+* Probably a load of other C SDK features...
 
 ## Example
 
@@ -56,8 +66,6 @@ $ cd demo-project/workers/server
 $ cargo doc -p spatialos-gdk --open
 ```
 
-and look at the `spatialos-gdk` crate.
-
 ## Running the demo project
 
 ```shell
@@ -69,6 +77,24 @@ $ spatial local launch
 If all goes well, you should see an entity in the inspector move back and forth. Building the worker
 for the first time will also take some time as `cargo` is building all of the dependencies.
 
+### Generating the snapshot
+
+```shell
+$ cd demo-project/snapshot
+$ cargo run
+```
+
+## The build process
+
+Inside the worker's [`build.rs`](demo-project/workers/server/src/build.rs) file, the code generation is run.
+This means that there is no need to run `spatial codegen` if you are just using Rust workers.
+
+If you make any changes to your worker or schema, you can simply run `cargo run` and it will generate the
+code and run the worker with the default parameters (connecting to the receptionist on `localhost`).
+
+If you are developing a managed worker, you will need to re-run `spatial build -t=debug` instead, as this runs `cargo build`
+but also zips the artifact up for SpatialOS to use.
+
 ## Repository structure
 
 * `spatialos-gdk` contains the GDK crate itself.
@@ -78,3 +104,6 @@ for the first time will also take some time as `cargo` is building all of the de
 	* `demo-project/snapshot` contains a snapshot generation tool.
 	* `demo-project/workers/server` contains the single managed worker.
 
+## Known issues
+
+* Serialising a byte array or a String currently leaks the memory.

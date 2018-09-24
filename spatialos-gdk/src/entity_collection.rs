@@ -35,6 +35,18 @@ impl<'a, S: 'static + GeneratedSchema> Entities<'a, S> {
 
     /// Gets an iterator over all entities in the worker's local view which
     /// match the `ComponentGroup` `G`.
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// for mut entity in entities.get::<MovementData>() {
+    ///     entity.position.coords.x = rand::thread_rng().gen::<f64>();
+    ///
+    ///     println!("Entity of type {} has an x value of {}", 
+    ///         *entity.metadata.entity_type, 
+    ///         entity.position.coords.x);
+    /// }
+    /// ```
     pub fn get<'b, G: 'b + ComponentGroup<'b, S>>(&'b mut self) -> Box<Iterator<Item = G> + 'b> {
         let mut group_bit_field = S::ComponentBitField::new();
         G::add_to_bit_field(&mut group_bit_field);
@@ -53,6 +65,14 @@ impl<'a, S: 'static + GeneratedSchema> Entities<'a, S> {
     /// The closure will likely be run in parallel, however if it is more effective
     /// to execute them in series, that will be done. Please see the [rayon](https://docs.rs/rayon/1.0.2/rayon)
     /// documentation for more details.
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// entities.par_for_each::<MovementData, _>(|entity| {
+    ///     entity.position.coords.x = rand::thread_rng().gen::<f64>();
+    /// });
+    /// ```
     pub fn par_for_each<'b, G: 'b + ComponentGroup<'b, S>, F: Send + Sync>(&'b mut self, cb: F)
     where
         F: Fn(&mut G),
