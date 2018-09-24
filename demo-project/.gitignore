@@ -1,0 +1,21 @@
+# SpatialOS project build directory
+build/
+
+# Cache and other project metadata
+.spatialos/
+
+# Logs
+spatial.log
+logs/
+
+# Schema generated code
+generated_code
+
+# Worker SDK and other dependencies
+dependencies/
+
+# Visual Studio output directories and temporary files
+bin
+obj
+.vs
+*.user

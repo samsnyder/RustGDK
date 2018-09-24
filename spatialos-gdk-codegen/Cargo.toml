@@ -1,0 +1,12 @@
+[package]
+name = "spatialos-gdk-codegen"
+version = "0.1.0"
+authors = ["sam <samsnyder96@gmail.com>"]
+
+[dependencies]
+syn = "0.11.11"
+quote = "0.3.15"
+serde = "1.0"
+serde_json = "1.0"
+serde_derive = "1.0"
+walkdir = "2"

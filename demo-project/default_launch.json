@@ -1,0 +1,47 @@
+{
+  "template": "small",
+  "world": {
+    "chunkEdgeLengthMeters": 5,
+    "snapshots": {
+      "snapshotWritePeriodSeconds": 0
+    },
+    "dimensions": {
+      "xMeters": 100,
+      "zMeters": 100
+    }
+  },
+  "workers": [
+    {
+      "worker_type": "server",
+      "permissions": [{
+          "entity_creation": {
+          "allow": true
+        },
+        "entity_deletion": {
+          "allow": true
+        },
+        "entity_query": {
+          "allow": true,
+          "components": [
+              "*"
+          ]
+        }
+      }],
+      "load_balancing": {
+        "points_of_interest": {
+          "num_workers": 2,
+          "points": [
+            {
+              "x": -10,
+              "z": 0
+            },
+            {
+              "x": 10,
+              "z": 0
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

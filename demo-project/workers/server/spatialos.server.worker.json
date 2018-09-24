@@ -1,0 +1,67 @@
+{
+  "build": {
+    "tasks_filename": "spatialos.rust.build.json"
+  },
+  "bridge": {
+    "worker_attribute_set": {
+      "attributes": [
+        "server"
+      ]
+    },
+    "entity_interest": {
+      "range_entity_interest": {
+        "radius": 3
+      }
+    },
+    "component_delivery": {
+      "default": "RELIABLE_ORDERED",
+      "checkoutAllInitially": true
+    }
+  },
+  "managed": {
+    "windows": {
+      "artifact_name": "server@Windows.zip",
+      "command": "server",
+      "arguments": [
+        "receptionist",
+        "${IMPROBABLE_RECEPTIONIST_HOST}",
+        "${IMPROBABLE_RECEPTIONIST_PORT}",
+        "${IMPROBABLE_WORKER_ID}"]
+    },
+    "linux": {
+      "artifact_name": "server@Linux.zip",
+      "command": "server",
+      "arguments": [
+        "receptionist",
+        "${IMPROBABLE_RECEPTIONIST_HOST}",
+        "${IMPROBABLE_RECEPTIONIST_PORT}",
+        "${IMPROBABLE_WORKER_ID}"]
+    },
+    "macos": {
+      "artifact_name": "server@Mac.zip",
+      "command": "server",
+      "arguments": [
+        "receptionist",
+        "${IMPROBABLE_RECEPTIONIST_HOST}",
+        "${IMPROBABLE_RECEPTIONIST_PORT}",
+        "${IMPROBABLE_WORKER_ID}"]
+    }
+  },
+  "external": {
+    "local": {
+      "run_type": "EXECUTABLE_ZIP",
+      "windows": {
+        "artifact_name": "server@Windows.zip",
+        "command": "server"
+      },
+      "linux": {
+        "artifact_name": "server@Linux.zip",
+        "command": "server"
+      },
+      "macos": {
+        "artifact_name": "server@Mac.zip",
+        "command": "server"
+      }
+    }
+  }
+}

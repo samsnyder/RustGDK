@@ -1,0 +1,95 @@
+{
+  "tasks": [
+      {
+        "name": "Codegen",
+        "steps": [
+          {
+            "name": "cargo build",
+            "command": "cargo",
+            "arguments": [
+              "build"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Build",
+        "steps": [
+          {
+            "name": "cargo clean debug",
+            "command": "cargo",
+            "arguments": [
+              "clean",
+              "-p",
+              "server"
+            ],
+            "target": "debug"
+          },
+          {
+            "name": "cargo clean release",
+            "command": "cargo",
+            "arguments": [
+              "clean",
+              "-p",
+              "server",
+              "--release"
+            ],
+            "target": "release"
+          },
+          {
+            "name": "cargo build debug",
+            "command": "cargo",
+            "arguments": [
+              "build"
+            ],
+            "target": "debug"
+          },
+          {
+          	"name": "package debug",
+          	"arguments": [
+          		"file",
+          		"zip",
+          		"server",
+              "--basePath=target/debug",
+          		"--output=../../build/assembly/worker/server",
+          		"--worker_platform=current"
+          	],
+          	"target": "debug"
+          },
+          {
+            "name": "cargo build release",
+            "command": "cargo",
+            "arguments": [
+              "build",
+              "--release"
+            ],
+            "target": "release"
+          },
+          {
+          	"name": "package release",
+          	"arguments": [
+          		"file",
+          		"zip",
+          		"server",
+              "--basePath=target/release",
+          		"--output=../../build/assembly/worker/server",
+          		"--worker_platform=current"
+          	],
+          	"target": "release"
+          }
+        ]
+      },
+      {
+        "name": "Clean",
+        "steps": [
+          {
+            "name": "cargo build",
+            "command": "cargo",
+            "arguments": [
+              "clean"
+            ]
+          }
+        ]
+      }
+    ]
+}

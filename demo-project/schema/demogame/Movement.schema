@@ -1,0 +1,7 @@
+package demogame;
+
+component Movement {
+	id = 1000;
+
+	bool moving_right = 1;
+}

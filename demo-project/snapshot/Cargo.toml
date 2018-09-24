@@ -1,0 +1,12 @@
+[package]
+name = "snapshot"
+version = "0.1.0"
+authors = ["sam <samsnyder96@gmail.com>"]
+
+build = "src/build.rs"
+
+[dependencies]
+spatialos-gdk = { path = "../../spatialos-gdk" }
+
+[build-dependencies]
+spatialos-gdk-codegen = { path = "../../spatialos-gdk-codegen" }

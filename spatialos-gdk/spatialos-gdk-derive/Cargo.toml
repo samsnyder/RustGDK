@@ -1,0 +1,11 @@
+[package]
+name = "spatialos-gdk-derive"
+version = "0.1.0"
+authors = ["sam <samsnyder96@gmail.com>"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = "0.11.11"
+quote = "0.3.15"
