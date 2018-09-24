@@ -11,13 +11,13 @@ use spatialos_gdk::{Connection, ConnectionParameters, Entities, EntityId, System
                     WorldError, Write};
 use std::{env, thread, time};
 
-// Include the code generated components which is build in the build.rs file.
+// Include the code generated components which is built in the build.rs file.
 include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 
 const FRAME_INTERVAL_S: f64 = 1.0 / 30.0;
 
 // Define the components which we want to iterate over, as well as the access which
-// we would like.
+// we would like (`Read` or `Write`).
 //
 // You can also use `ModifiedRead` and `ModifiedWrite` to only match entities where
 // the component value has changed since the last frame.
