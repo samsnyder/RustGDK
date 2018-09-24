@@ -10,7 +10,7 @@ include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 fn main() {
     let filepath = "../snapshots/default.snapshot";
 
-    let mut entities = vec![
+    let entities = vec![
         EntityTemplate::new(vec![Worker::Type("server")])
             .set_entity_id(1)
             .with_component(
@@ -42,19 +42,16 @@ fn main() {
             .with_component(
                 Worker::None,
                 Persistence {},
-            )
-    ];
-
-    for i in 0..1 {
-        entities.push(EntityTemplate::new(vec![Worker::Type("server")])
-            .set_entity_id(i + 5)
+            ),
+        EntityTemplate::new(vec![Worker::Type("server")])
+            .set_entity_id(3)
             .with_component(
                 Worker::Type("server"),
                 Position {
                     coords: Coordinates {
                         x: 0.0,
                         y: 0.0,
-                        z: i as f64,
+                        z: 0.0,
                     },
                 },
             )
@@ -67,8 +64,8 @@ fn main() {
                 Movement {
                     moving_right: true
                 },
-            ));
-    }
+            )
+    ];
 
     ::spatialos_gdk::Snapshot::<Schema>::create(filepath, entities.into_iter());
 
