@@ -1,7 +1,7 @@
 use TagComponentArray;
 use downcast_rs::Downcast;
 use entity::Entity;
-// use std::cell::RefCell;
+use std::cell::RefCell;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -11,8 +11,6 @@ use worker::schema::{Component, GeneratedSchema};
 use worker::schema::{ComponentDataInterface, ComponentUpdateInterface};
 use worker::{Authority, ComponentId, Connection, EntityId};
 use world::{PartialEntity, WorldTime};
-
-use debug_cell::RefCell;
 
 pub const MAX_ENTITIES_PER_CHUNK: usize = 1024;
 

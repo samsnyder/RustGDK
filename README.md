@@ -74,8 +74,9 @@ $ spatial worker build -t=debug
 $ spatial local launch
 ```
 
-If all goes well, you should see an entity in the inspector move back and forth. Building the worker
-for the first time will also take some time as `cargo` is building all of the dependencies.
+Building the worker for the first time will take a while because `cargo` is building all of the dependencies.
+
+If all goes well, you should see an entity in the inspector move back and forth.
 
 ### Generating the snapshot
 

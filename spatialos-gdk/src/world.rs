@@ -7,15 +7,13 @@ use entity_collection::{Entities, EntityCollection};
 use entity_template::EntityTemplate;
 use shared_resources::SharedResources;
 use std::any::Any;
-// use std::cell::RefCell;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use system::System;
 use worker::schema::{Command, Component, GeneratedSchema, GlobalComponentDataInterface};
 use worker::{Authority, CommandStatus, ComponentId, Connection, Dispatcher, EntityId, LogLevel,
              RequestId};
-
-use debug_cell::RefCell;
 
 /// Possible errors which can be thrown by the `World`.
 pub enum WorldError {

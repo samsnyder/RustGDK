@@ -4,8 +4,6 @@ extern crate rayon;
 #[macro_use]
 extern crate downcast_rs;
 
-extern crate debug_cell;
-
 mod chunk;
 mod commands;
 mod component_group;
