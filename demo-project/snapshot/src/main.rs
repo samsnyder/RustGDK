@@ -3,7 +3,7 @@ extern crate spatialos_gdk;
 use schema::Schema;
 use schema::improbable::{Position, Coordinates, Persistence};
 use schema::demogame::Movement;
-use spatialos_gdk::{EntityTemplate, Worker};
+use spatialos_gdk::{EntityTemplate, Worker, Snapshot};
 
 include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 
@@ -67,7 +67,7 @@ fn main() {
             )
     ];
 
-    ::spatialos_gdk::Snapshot::<Schema>::create(filepath, entities.into_iter());
+    Snapshot::<Schema>::create(filepath, entities.into_iter());
 
     println!("Saved snapshot to {}", filepath);
 }
