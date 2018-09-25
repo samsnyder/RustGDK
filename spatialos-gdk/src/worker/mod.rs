@@ -80,10 +80,16 @@ pub enum Op<'a> {
     Unknown,
 }
 
+#[cfg(windows)]
+type BindegenEnumType = i32;
+
+#[cfg(not(windows))]
+type BindegenEnumType = u32;
+
 impl<'a> Op<'a> {
     fn from_union(worker_op: &ffi::Worker_Op) -> Op {
         unsafe {
-            match worker_op.op_type as u32 {
+            match worker_op.op_type as BindegenEnumType {
                 ffi::Worker_OpType::WORKER_OP_TYPE_DISCONNECT => {
                     Op::Disconnect(worker_op.__bindgen_anon_1.disconnect.as_ref())
                 }

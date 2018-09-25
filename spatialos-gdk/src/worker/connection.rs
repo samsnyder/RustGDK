@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::ffi::{CStr, CString};
 use std::mem;
 use std::ptr;
-use worker::{ffi, ComponentId, EntityId, FFIEnum, LogLevel, OpList, RequestId};
+use worker::{ffi, ComponentId, EntityId, FFIEnum, LogLevel, OpList, RequestId, BindegenEnumType};
 
 pub enum ConnectionType {
     RakNet,
@@ -26,7 +26,7 @@ impl Default for NetworkParameters {
             let ffi_params = ffi::Worker_DefaultConnectionParameters().network;
             NetworkParameters {
                 use_external_ip: ffi_params.use_external_ip != 0,
-                connection_type: match ffi_params.connection_type as u32 {
+                connection_type: match ffi_params.connection_type as BindegenEnumType {
                     ffi::Worker_NetworkConnectionType::WORKER_NETWORK_CONNECTION_TYPE_TCP => {
                         ConnectionType::TCP
                     }

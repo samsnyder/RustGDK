@@ -10,7 +10,7 @@ fn main() {
     let worker_package_dir = PathBuf::from(env::var("OUT_DIR").unwrap()).join("worker_sdk");
 
     let package_name = if target.contains("windows") {
-        "c-static-x86_64-msvc_mdd-win32"
+        "c-static-x86_64-msvc_md-win32"
     } else if target.contains("apple") {
         "c-static-x86_64-clang_libcpp-macos"
     } else if target.contains("linux") {
@@ -26,16 +26,30 @@ fn main() {
         worker_package_dir.join("lib").display()
     );
 
-    let libs = vec![
-        "worker",
-        "grpc++",
-        "grpc",
-        "gpr",
-        "protobuf",
-        "RakNetLibStatic",
-        "ssl",
-        "z",
-    ];
+    let libs = if target.contains("windows") {
+       vec![
+            "worker",
+            "grpc++",
+            "grpc",
+            "gpr",
+            "libprotobuf",
+            "RakNetLibStatic",
+            "ssl",
+            "zlibstatic",
+        ]
+    } else {
+        vec![
+            "worker",
+            "grpc++",
+            "grpc",
+            "gpr",
+            "protobuf",
+            "RakNetLibStatic",
+            "ssl",
+            "z",
+        ]
+    };
+
     for lib in libs {
         println!("cargo:rustc-link-lib=static={}", lib);
     }
@@ -48,6 +62,7 @@ fn main() {
 
     let bindings = bindgen::Builder::default()
         .constified_enum_module(".*")
+        .disable_untagged_union()
         .header(
             worker_package_dir
                 .join("include/improbable/c_worker.h")

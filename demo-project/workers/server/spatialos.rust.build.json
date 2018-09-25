@@ -49,7 +49,7 @@
           	"arguments": [
           		"file",
           		"zip",
-          		"server",
+          		"*",
               "--basePath=target/debug",
           		"--output=../../build/assembly/worker/server",
           		"--worker_platform=current"
@@ -70,7 +70,7 @@
           	"arguments": [
           		"file",
           		"zip",
-          		"server",
+          		"*",
               "--basePath=target/release",
           		"--output=../../build/assembly/worker/server",
           		"--worker_platform=current"

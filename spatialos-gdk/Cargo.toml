@@ -12,4 +12,4 @@ boxfnonce = "0.1.0"
 rayon = "1.0"
 
 [build-dependencies]
-bindgen = "0.26.3"
+bindgen = "0.40.0"

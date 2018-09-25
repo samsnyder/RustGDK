@@ -21,7 +21,7 @@
   "managed": {
     "windows": {
       "artifact_name": "server@Windows.zip",
-      "command": "server",
+      "command": "server.exe",
       "arguments": [
         "receptionist",
         "${IMPROBABLE_RECEPTIONIST_HOST}",
@@ -52,7 +52,7 @@
       "run_type": "EXECUTABLE_ZIP",
       "windows": {
         "artifact_name": "server@Windows.zip",
-        "command": "server"
+        "command": "server.exe"
       },
       "linux": {
         "artifact_name": "server@Linux.zip",

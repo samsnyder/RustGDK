@@ -6,7 +6,7 @@ use worker::{ffi, ComponentId, Connection, EntityId};
 
 pub struct SnapshotOutputStream {
     pointer: *mut ffi::Worker_SnapshotOutputStream,
-    vtable: Box<ffi::Worker_ComponentVtable>,
+    _vtable: Box<ffi::Worker_ComponentVtable>,
 }
 
 impl Drop for SnapshotOutputStream {
@@ -32,7 +32,7 @@ impl SnapshotOutputStream {
 
             SnapshotOutputStream {
                 pointer,
-                vtable: Box::from_raw(vtable_ptr),
+                _vtable: Box::from_raw(vtable_ptr),
             }
         }
     }

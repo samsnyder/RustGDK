@@ -66,6 +66,12 @@ $ cd spatialos-gdk
 $ cargo doc -p spatialos-gdk --open
 ```
 
+## Requirements
+
+* Rust and `cargo`
+* [`rustfmt`](https://github.com/rust-lang-nursery/rustfmt). Install with `rustup component add rustfmt-preview`
+* [Clang](http://releases.llvm.org/download.html) (this is a dependency of [rust-bindgen](https://rust-lang-nursery.github.io/rust-bindgen/requirements.html))
+
 ## Running the demo project
 
 ```shell
