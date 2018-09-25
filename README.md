@@ -1,7 +1,7 @@
 > This is not an official Improbable GDK. I made this to try and learn Rust,
   and it is **untested**, **undocumented** and still **missing features**. Please use at your own risk!
 
-> Also, I have only tested this on OS X, so it will likely not immediately work for Windows or Linux.
+> Also, I have only tested this on OS X and Windows, so it will likely not immediately work for Linux.
 
 > Also, please give me Rust advice if you see something bad (style and best practices as well as bugs!)
 
